@@ -1,4 +1,4 @@
-// PlunetHelper, version 1.0
+// PlunetHelper, version 1.1
 // (C) 2018 Michael K. Schmidt
 //
 // define helpers to determine DST
@@ -27,14 +27,30 @@ if (ccFakeSelect.length > 0) {
     ccFakeSelect.classList.remove('hinweistext');
     ccFakeSelect.classList.add('selectedTag');
 }
-// check if DST is on, and if so, fix the "CET" indicator
-var today = new Date();
-if (today.isDstObserved()) {
-    var tags = document.getElementsByTagName('textarea');
-    for (var i = 0; i < tags.length; i++) {
+var tags = document.getElementsByTagName('textarea');
+for (var i = 0; i < tags.length; i++) {
+    // check if DST is on, and if so, fix the "CET" indicator
+    var today = new Date();
+    if (today.isDstObserved()) {
         if (tags[i].innerHTML.match(/\b(\d{1,2}:\d\d)\sCET\b/i) !== null) {
             tags[i].innerHTML = tags[i].innerHTML.replace(/\b(\d{1,2}:\d\d)\sCET\b/i, '$1 CEST');
-            break;
         }
+    }
+    // look for *bold shortcuts* and format as <strong>bold</strong>
+    if (tags[i].innerHTML.match(/\*([^<>]+?)\*/gism) !== null) {
+        tags[i].innerHTML = tags[i].innerHTML.replace(/\*([^<>]+?)\*/gism, '<strong>$1</strong>');
+    }
+    // look for §bold shortcuts§ and format as <strong style="color:red;">bold</strong>
+    if (tags[i].innerHTML.match(/\§([^<>]+?)\§/gism) !== null) {
+        tags[i].innerHTML = tags[i].innerHTML.replace(/\*([^<>]+?)\*/gism, '<strong style="color:#ff0000;">$1</strong>');
+    }
+    // look for mq project and file(s) info
+    var mqp = tags[i].innerHTML.match(/((.|\r\n|\r|\n|\\r\\n|\\r|\\n)*?memoq\s+?project\s*?:\s*?)(.+?)(\r\n|\r|\n|\\r\\n|\\r|\\n).*/is);
+    if (mqp !== null) {
+        tags[i].innerHTML = tags[i].innerHTML.replace(/((.|\r\n|\r|\n|\\r\\n|\\r|\\n)*?memoq\s+?project\s*?:\s*?)(.+?)(\r\n|\r|\n|\\r\\n|\\r|\\n).*/is, '<strong>$3</strong>');
+    }
+    var mqf = tags[i].innerHTML.match(/((.|\r\n|\r|\n|\\r\\n|\\r|\\n)*?(file(s)?\s*?(\s*?\(\d+?\))?:\s*?))(.+?)((\r\n|\r|\n|\\r\\n|\\r|\\n)memoq\s+?project.*)/is);
+    if (mqf !== null) {
+        tags[i].innerHTML = tags[i].innerHTML.replace(/((.|\r\n|\r|\n|\\r\\n|\\r|\\n)*?(file(s)?\s*?(\s*?\(\d+?\))?:\s*?))(.+?)((\r\n|\r|\n|\\r\\n|\\r|\\n)memoq\s+?project.*)/is, '<strong>$6</strong>');
     }
 }
