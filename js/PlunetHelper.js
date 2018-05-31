@@ -1,4 +1,4 @@
-// PlunetHelper, version 1.3
+// PlunetHelper, version 1.4
 // (C) 2018 Michael K. Schmidt
 //
 // define helpers to determine DST
@@ -53,5 +53,9 @@ for (var i = 0; i < tags.length; i++) {
     var mqf = tags[i].innerHTML.match(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)([^<>]+?)(\s*?[\r\n][\r\n])/is);
     if (mqf !== null) {
         tags[i].innerHTML = tags[i].innerHTML.replace(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)([^<>]+?)(\s*?[\r\n][\r\n])/is, '<strong><span style="background-color:#ffff99;">$1$4</span></strong>$5');
+    }
+    // get rid of unnecessary linebreaks
+    if (tags[i].innerHTML.match(/&lt;div&gt;&lt;span[^&]*?&gt;&lt;\/span&gt;&lt;\/div&gt;/gism) !== null) {
+        tags[i].innerHTML = tags[i].innerHTML.replace(/&lt;div&gt;&lt;span[^&]*?&gt;&lt;\/span&gt;&lt;\/div&gt;/gism, '');
     }
 }
