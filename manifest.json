@@ -1,14 +1,14 @@
 {
   "manifest_version": 2,
   "name": "PlunetHelper",
-  "version": "1.1",
+  "version": "1.2",
   "author": "Michael K. Schmidt",
   "description": "Helps formatting Plunet request mails",
   "icons": { "128" : "img/sunshine.png"},
   "homepage_url": "https://github.com/miklasch/PlunetHelper",
   "content_scripts": [
     {
-      "matches": ["https://plunet.altagram.de:8443/pagesUTF8/Sys_EMailNeu.jsp*"],
+      "matches": ["https://plunet.altagram.de:8443/pagesUTF8/Sys_EMailNeu.jsp*", "http://plunet.altagram.de/pagesUTF8/Sys_EMailNeu.jsp*"],
       "run_at": "document_end",
       "js": ["js/PlunetHelper.js"]
     }

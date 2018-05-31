@@ -1,4 +1,4 @@
-// PlunetHelper, version 1.1
+// PlunetHelper, version 1.2
 // (C) 2018 Michael K. Schmidt
 //
 // define helpers to determine DST
@@ -42,15 +42,15 @@ for (var i = 0; i < tags.length; i++) {
     }
     // look for §bold shortcuts§ and format as <strong style="color:red;">bold</strong>
     if (tags[i].innerHTML.match(/\§([^<>]+?)\§/gism) !== null) {
-        tags[i].innerHTML = tags[i].innerHTML.replace(/\*([^<>]+?)\*/gism, '<strong style="color:#ff0000;">$1</strong>');
+        tags[i].innerHTML = tags[i].innerHTML.replace(/\§([^<>]+?)\§/gism, '<strong><span style="color:#ff0000;">$1</span></strong>');
     }
     // look for mq project and file(s) info
-    var mqp = tags[i].innerHTML.match(/((.|\r\n|\r|\n|\\r\\n|\\r|\\n)*?memoq\s+?project\s*?:\s*?)(.+?)(\r\n|\r|\n|\\r\\n|\\r|\\n).*/is);
+    var mqp = tags[i].innerHTML.match(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)([^<>]+?)(\s*?[\r\n])/is);
     if (mqp !== null) {
-        tags[i].innerHTML = tags[i].innerHTML.replace(/((.|\r\n|\r|\n|\\r\\n|\\r|\\n)*?memoq\s+?project\s*?:\s*?)(.+?)(\r\n|\r|\n|\\r\\n|\\r|\\n).*/is, '<strong>$3</strong>');
+        tags[i].innerHTML = tags[i].innerHTML.replace(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)([^<>]+?)(\s*?[\r\n])/is, '<strong><span style="background-color:#ffff99;">$1$2</span></strong>$3');
     }
-    var mqf = tags[i].innerHTML.match(/((.|\r\n|\r|\n|\\r\\n|\\r|\\n)*?(file(s)?\s*?(\s*?\(\d+?\))?:\s*?))(.+?)((\r\n|\r|\n|\\r\\n|\\r|\\n)memoq\s+?project.*)/is);
+    var mqf = tags[i].innerHTML.match(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)([^<>]+?)(\s*?[\r\n][\r\n])/is);
     if (mqf !== null) {
-        tags[i].innerHTML = tags[i].innerHTML.replace(/((.|\r\n|\r|\n|\\r\\n|\\r|\\n)*?(file(s)?\s*?(\s*?\(\d+?\))?:\s*?))(.+?)((\r\n|\r|\n|\\r\\n|\\r|\\n)memoq\s+?project.*)/is, '<strong>$6</strong>');
+        tags[i].innerHTML = tags[i].innerHTML.replace(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)([^<>]+?)(\s*?[\r\n][\r\n])/is, '<strong><span style="background-color:#ffff99;">$1$4</span></strong>$5');
     }
 }
