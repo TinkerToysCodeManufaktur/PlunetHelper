@@ -1,4 +1,4 @@
-// PlunetHelper, version 1.2
+// PlunetHelper, version 1.3
 // (C) 2018 Michael K. Schmidt
 //
 // define helpers to determine DST
@@ -27,6 +27,7 @@ if (ccFakeSelect.length > 0) {
     ccFakeSelect.classList.remove('hinweistext');
     ccFakeSelect.classList.add('selectedTag');
 }
+// prettyfy/enhance the mail body text
 var tags = document.getElementsByTagName('textarea');
 for (var i = 0; i < tags.length; i++) {
     // check if DST is on, and if so, fix the "CET" indicator
@@ -36,15 +37,15 @@ for (var i = 0; i < tags.length; i++) {
             tags[i].innerHTML = tags[i].innerHTML.replace(/\b(\d{1,2}:\d\d)\sCET\b/i, '$1 CEST');
         }
     }
-    // look for *bold shortcuts* and format as <strong>bold</strong>
+    // look for *bold* shortcuts and format as <strong>bold</strong>
     if (tags[i].innerHTML.match(/\*([^<>]+?)\*/gism) !== null) {
         tags[i].innerHTML = tags[i].innerHTML.replace(/\*([^<>]+?)\*/gism, '<strong>$1</strong>');
     }
-    // look for §bold shortcuts§ and format as <strong style="color:red;">bold</strong>
+    // look for §important§ shortcuts and format as <strong style="color:red;">important</strong>
     if (tags[i].innerHTML.match(/\§([^<>]+?)\§/gism) !== null) {
         tags[i].innerHTML = tags[i].innerHTML.replace(/\§([^<>]+?)\§/gism, '<strong><span style="color:#ff0000;">$1</span></strong>');
     }
-    // look for mq project and file(s) info
+    // look for memoQ project name and file(s) list info, and highlight if found
     var mqp = tags[i].innerHTML.match(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)([^<>]+?)(\s*?[\r\n])/is);
     if (mqp !== null) {
         tags[i].innerHTML = tags[i].innerHTML.replace(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)([^<>]+?)(\s*?[\r\n])/is, '<strong><span style="background-color:#ffff99;">$1$2</span></strong>$3');
