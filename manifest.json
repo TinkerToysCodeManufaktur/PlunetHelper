@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "PlunetHelper",
+  "name": "PlünetHälper",
   "version": "1.6",
   "author": "Michael K. Schmidt",
   "description": "Helps formatting Plunet request mails",
@@ -14,7 +14,8 @@
     }
   ],
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "storage"
   ],
   "options_ui": {
     "page": "html/options.html",
