@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Settings for PlunetHelper</title>
+	<link rel="stylesheet" type="text/css" href="../css/PlunetHelper.css" media="screen"/>
+	<script type="text/javascript" src="../js/options.js"></script>
+</head>
+<body>
+	<h1 align="center">Settings</h1>
+	<label class="switch"><input type="checkbox" id="add-coord" class="options-clickable" checked="checked"><span class="slider round"></span></label>
+	<span id="add-coord-label">Add Coordination to CC</span><br />
+	<label class="switch"><input type="checkbox" id="correct-cest" class="options-clickable" checked="checked"><span class="slider round"></span></label>
+	<span id="correct-cest-label">Correct CET/CEST times in due dates</span><br />
+	<label class="switch"><input type="checkbox" id="make-bold" class="options-clickable" checked="checked"><span class="slider round"></span></label>
+	<span id="make-bold-label">Format *this text* as <b>bold</b></span><br />
+	<label class="switch"><input type="checkbox" id="make-important" class="options-clickable" checked="checked"><span class="slider round"></span></label>
+	<span id="make-important-label">Format §this text§ as <b style="color:red;">important</b></span><br />
+	<label class="switch"><input type="checkbox" id="remove-empty" class="options-clickable" checked="checked"><span class="slider round"></span></label>
+	<span id="remove-empty-label">Try and remove superfluous empty rows</span><br />
+	<label class="switch"><input type="checkbox" id="swap-mqinfo" class="options-clickable" checked="checked"><span class="slider round"></span></label>
+	<span id="swap-mqinfo-label">Put memoQ project info first</span><br />
+	<label class="switch"><input type="checkbox" id="highlight-mqinfo" class="options-clickable" checked="checked"><span class="slider round"></span></label>
+	<span id="highlight-mqinfo-label">Highlight memoQ info in: </span>&nbsp;
+	<select id="background-color" class="options-changeable">
+		<option value="blue">Blue</option>
+		<option value="red">Red</option>
+		<option value="green">Green</option>
+		<option value="yellow" selected="selected">Yellow</option>
+	</select><br /><br />
+	<div align="center">
+		<button id="save-button">Save Settings</button>&nbsp;&nbsp;&nbsp;
+		<button id="reset-button">Restore Defaults</button>&nbsp;&nbsp;&nbsp;
+		<span id="ext-version" style="font-size:0.8em;"></span>
+	</div><br />
+</body>
+</html>

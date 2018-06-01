@@ -1,4 +1,4 @@
-// PlunetHelper, version 1.4
+// PlunetHelper, version 1.6
 // (C) 2018 Michael K. Schmidt
 //
 // define helpers to determine DST
@@ -34,16 +34,13 @@ for (var i = 0; i < tags.length; i++) {
     var today = new Date();
     if (today.isDstObserved()) {
         if (tags[i].innerHTML.match(/\b(\d{1,2}:\d\d)\sCET\b/i) !== null) {
-            tags[i].innerHTML = tags[i].innerHTML.replace(/\b(\d{1,2}:\d\d)\sCET\b/i, '$1 CEST');
+            tags[i].innerHTML = tags[i].innerHTML.replace(/\b(\d{1,2}:\d\d)\sCET\b/ig, '$1 CEST');
         }
     }
-    // look for *bold* shortcuts and format as <strong>bold</strong>
-    if (tags[i].innerHTML.match(/\*([^<>]+?)\*/gism) !== null) {
-        tags[i].innerHTML = tags[i].innerHTML.replace(/\*([^<>]+?)\*/gism, '<strong>$1</strong>');
-    }
-    // look for §important§ shortcuts and format as <strong style="color:red;">important</strong>
-    if (tags[i].innerHTML.match(/\§([^<>]+?)\§/gism) !== null) {
-        tags[i].innerHTML = tags[i].innerHTML.replace(/\§([^<>]+?)\§/gism, '<strong><span style="color:#ff0000;">$1</span></strong>');
+    // look if file(s) info precedes memoq project name, and flip them
+    var turned = tags[i].innerHTML.match(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)([^<>]+?)(\s*?)(memoq\s+?project\s*?:\s*?)([^<>]+?)(\s*?[\r\n])/gism);
+    if (turned !== null) {
+        //tags[i].innerHTML = tags[i].innerHTML.replace(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)([^<>]+?)(\s*?)(memoq\s+?project\s*?:\s*?)([^<>]+?)(\s*?[\r\n])/gism, '$6$7$8$1$4');
     }
     // look for memoQ project name and file(s) list info, and highlight if found
     var mqp = tags[i].innerHTML.match(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)([^<>]+?)(\s*?[\r\n])/is);
@@ -57,5 +54,13 @@ for (var i = 0; i < tags.length; i++) {
     // get rid of unnecessary linebreaks
     if (tags[i].innerHTML.match(/&lt;div&gt;&lt;span[^&]*?&gt;&lt;\/span&gt;&lt;\/div&gt;/gism) !== null) {
         tags[i].innerHTML = tags[i].innerHTML.replace(/&lt;div&gt;&lt;span[^&]*?&gt;&lt;\/span&gt;&lt;\/div&gt;/gism, '');
+    }
+    // look for *bold* shortcuts and format as <strong>bold</strong>
+    if (tags[i].innerHTML.match(/\*([^<>]+?)\*/gism) !== null) {
+        tags[i].innerHTML = tags[i].innerHTML.replace(/\*([^<>]+?)\*/gism, '<strong>$1</strong>');
+    }
+    // look for §important§ shortcuts and format as <strong style="color:red;">important</strong>
+    if (tags[i].innerHTML.match(/\§([^<>]+?)\§/gism) !== null) {
+        tags[i].innerHTML = tags[i].innerHTML.replace(/\§([^<>]+?)\§/gism, '<strong><span style="color:#ff0000;">$1</span></strong>');
     }
 }
