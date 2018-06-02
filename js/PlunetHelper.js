@@ -46,51 +46,62 @@ chrome.storage.local.get(null, function(settings) {
         // prettyfy/enhance the mail body text
         var tags = document.getElementsByTagName('textarea');
         for (var i = 0; i < tags.length; i++) {
+            //console.log('before: ' + tags[i].textContent);
             if (dSTfix) {
                 // check if DST is on, and if so, fix the "CET" indicator
                 var today = new Date();
                 if (today.isDstObserved()) {
-                    if (tags[i].innerHTML.match(/\b(\d{1,2}:\d\d)\sCET\b/i) !== null) {
-                        tags[i].innerHTML = tags[i].innerHTML.replace(/\b(\d{1,2}:\d\d)\sCET\b/ig, '$1 CEST');
+                    if (tags[i].textContent.match(/\b(\d{1,2}:\d\d)\sCET\b/) !== null) {
+                        tags[i].textContent = tags[i].textContent.replace(/\b(\d{1,2}:\d\d)\sCET\b/g, '$1 CEST');
                     }
                 }
             }
             if (swapMQ) { // look if file(s) info precedes memoq project name, and flip them
-                var turned = tags[i].innerHTML.match(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)([^<>]+?)(\s*?)(memoq\s+?project\s*?:\s*?)([^<>]+?)(\s*?[\r\n])/gism);
+                var turned = tags[i].textContent.match(/(file(s)?\s*(\s*\(\d+\))?:\s*)(.+?)(memoq\s+project\s*:\s*)(.+?)(\r|\n|\r\n|<\s*br\s*\/?\s*>)+/sim);
                 if (turned !== null) {
-                    //tags[i].innerHTML = tags[i].innerHTML.replace(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)([^<>]+?)(\s*?)(memoq\s+?project\s*?:\s*?)([^<>]+?)(\s*?[\r\n])/gism, '$6$7$8$1$4');
+                    tags[i].textContent = tags[i].textContent.replace(/(file(s)?\s*(\s*\(\d+\))?:\s*)(.+?)(memoq\s+project\s*:\s*)(.+?)(\r|\n|\r\n|<\s*br\s*\/?\s*>)+/sim, '$5 $6<br/>$1$4<br/>');
                 }
             }
             if (highlightMQ) { // look for memoQ project name and file(s) list info, and highlight if found
-                var mqp = tags[i].innerHTML.match(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)([^<>]+?)(\s*?[\r\n])/is);
+                var mqp = tags[i].textContent.match(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)(.+?)(\r|\n|\r\n|<\s*br\s*\/?\s*>)+/ism);
                 if (mqp !== null) {
-                    tags[i].innerHTML = tags[i].innerHTML.replace(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)([^<>]+?)(\s*?[\r\n])/is, '<strong><span style="color:' + highColor + ';background-color:' + highBColor + ';">$1$2</span></strong>$3');
+                    tags[i].textContent = tags[i].textContent.replace(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)(.+?)(\r|\n|\r\n|<\s*br\s*\/?\s*>)+/ism, '<strong><span style="color:' + highColor + ';background-color:' + highBColor + ';">$1$2</span></strong><br/>');
                 }
-                var mqf = tags[i].innerHTML.match(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)([^<>]+?)(\s*?[\r\n][\r\n])/is);
+                var mqf = tags[i].textContent.match(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)(.+?)((\r|\n|\r\n|<\s*br\s*\/?\s*>){2,}|(?=memoq\s+?project))/ism);
                 if (mqf !== null) {
-                    tags[i].innerHTML = tags[i].innerHTML.replace(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)([^<>]+?)(\s*?[\r\n][\r\n])/is, '<strong><span style="color:' + highColor + ';background-color:' + highBColor + ';>$1$4</span></strong>$5');
+                    tags[i].textContent = tags[i].textContent.replace(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)(.+?)((\r|\n|\r\n|<\s*br\s*\/?\s*>){2,}|(?=memoq\s+?project))/ism, '<strong><span style="color:' + highColor + ';background-color:' + highBColor + ';">$1$4</span></strong><br/><br/>');
                 }
             }
             if (cleanUp) { // get rid of unnecessary linebreaks
-                if (tags[i].innerHTML.match(/&lt;div&gt;&lt;span[^&]*?&gt;&lt;\/span&gt;&lt;\/div&gt;/gism) !== null) {
-                    tags[i].innerHTML = tags[i].innerHTML.replace(/&lt;div&gt;&lt;span[^&]*?&gt;&lt;\/span&gt;&lt;\/div&gt;/gism, '');
+                if (tags[i].textContent.match(/(<div><span[^>]*>\s*?<\/span><\/div>\s*)+/gi) !== null) {
+                    tags[i].textContent = tags[i].textContent.replace(/(<div><span[^>]*>\s*?<\/span><\/div>\s*)+/gi, '$1');
+                }
+                if (tags[i].textContent.match(/<div>\s*?<\/div>(<br\/>)*/gi) !== null) {
+                    tags[i].textContent = tags[i].textContent.replace(/<div>\s*?<\/div>(<br\/>)*/gi, '');
+                }
+                if (tags[i].textContent.match(/(<div>)(<br\s*\/>)(<span[^>]*>.*?<\/span><\/div>\s*)/gis) !== null) {
+                    tags[i].textContent = tags[i].textContent.replace(/(<div>)(<br\s*\/>)(<span[^>]*>.*?<\/span><\/div>\s*)/gis, '$1$3');
+                }
+                if (tags[i].textContent.match(/(\/span><\/strong><br\/>)(<br\/>)(\s*<\/span>\s*<\/div>\s*<div>\s*<p>\s*<span)/gis) !== null) {
+                    tags[i].textContent = tags[i].textContent.replace(/(\/span><\/strong><br\/>)(<br\/>)(\s*<\/span>\s*<\/div>\s*<div>\s*<p>\s*<span)/gis, '$1$3');
                 }
             }
             if (makeBold) { // look for *bold* shortcuts and format as <strong>bold</strong>
-                if (tags[i].innerHTML.match(/\*([^<>]+?)\*/gism) !== null) {
-                    tags[i].innerHTML = tags[i].innerHTML.replace(/\*([^<>]+?)\*/gism, '<strong>$1</strong>');
+                if (tags[i].textContent.match(/\*+([^<>]+?)\*+/gism) !== null) {
+                    tags[i].textContent = tags[i].textContent.replace(/\*+([^<>]+?)\*+/gism, '<strong>$1</strong>');
                 }
             }
             if (makeImportant) { // look for §important§ shortcuts and format as <strong style="color:red;">important</strong>
-                if (tags[i].innerHTML.match(/\§([^<>]+?)\§/gism) !== null) {
-                    tags[i].innerHTML = tags[i].innerHTML.replace(/\§([^<>]+?)\§/gism, '<strong><span style="color:#ff0000;">$1</span></strong>');
+                if (tags[i].textContent.match(/\§+([^<>]+?)\§+/gism) !== null) {
+                    tags[i].textContent = tags[i].textContent.replace(/\§+([^<>]+?)\§+/gism, '<strong><span style="color:#ff0000;">$1</span></strong>');
                 }
             }
             if (makeHighlighted) { // look for #highlighting# shortcuts and format accordingly
-                if (tags[i].innerHTML.match(/\~([^<>]+?)\~/gism) !== null) {
-                    tags[i].innerHTML = tags[i].innerHTML.replace(/\~([^<>]+?)\~/gism, '<span style="color:' + highColor + ';background-color:' + highBColor + ';">$1</span>');
+                if (tags[i].textContent.match(/\~+([^<>]+?)\~+/gism) !== null) {
+                    tags[i].textContent = tags[i].textContent.replace(/\~+([^<>]+?)\~+/gism, '<span style="color:' + highColor + ';background-color:' + highBColor + ';">$1</span>');
                 }
             }
+            //console.log('after: ' + tags[i].textContent);
         }
     }
 });
