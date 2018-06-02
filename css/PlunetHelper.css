@@ -50,7 +50,3 @@ input:checked + .slider:before {
 .slider.round:before {
 	border-radius: 50%;
 }
-.valigned {
-	display: inline-block;
-	height: 26px;
-}
