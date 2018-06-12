@@ -10,12 +10,9 @@ Date.prototype.stdTimezoneOffset = function () {
 Date.prototype.isDstObserved = function () {
     return this.getTimezoneOffset() < this.stdTimezoneOffset();
 }
-var taname = document.getElementsByTagName('textarea')[0].getAttribute('name');
-console.log("textarea name: " + taname);
-var iframe = document.getElementById(taname + '_ifr').getAttribute('id');
-console.log("iframe id: " + iframe);
-document.getElementById(iframe).onload = function() {
-	var meiframe = this.id;
+function updateIframe(meiframe) {
+	//var meiframe = this.id;
+	console.log("update function is being called for " + meiframe);
 	chrome.storage.local.get(null, function (settings) {
 		console.log("stored settings found");
 		var iframe = document.getElementById(meiframe);
@@ -116,5 +113,18 @@ document.getElementById(iframe).onload = function() {
 		}
 		console.log("settings async call finished");
 	});
-	console.log("iframe onload finished");
+	console.log("iframe update function finished");
 }
+var taname = document.getElementsByTagName('textarea')[0].getAttribute('name');
+console.log("textarea name: " + taname);
+var iframeid = document.getElementById(taname + '_ifr').getAttribute('id');
+console.log("iframe id: " + iframeid);
+var iframe = document.getElementById(iframeid);
+if (iframe.readyState == "complete") {
+	console.log("iframe is fully loaded, calling the update function directly");
+	updateIframe(iframeid);
+} else {
+	console.log("iframe is NOT fully loaded, adding the update function as event listener");
+	iframe.onload = updateIframe(iframeid);
+}
+console.log("end of injected JS code reached");
