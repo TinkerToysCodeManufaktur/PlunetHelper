@@ -115,16 +115,35 @@ function updateIframe(meiframe) {
 	});
 	console.log("iframe update function finished");
 }
-var taname = document.getElementsByTagName('textarea')[0].getAttribute('name');
-console.log("textarea name: " + taname);
-var iframeid = document.getElementById(taname + '_ifr').getAttribute('id');
-console.log("iframe id: " + iframeid);
-var iframe = document.getElementById(iframeid);
-if (iframe.readyState == "complete") {
-	console.log("iframe is fully loaded, calling the update function directly");
-	updateIframe(iframeid);
+// entry point is here
+var ta = document.getElementsByTagName('textarea');
+if (typeof ta != 'undefined') {
+	var taname = ta[0].getAttribute('name');
+	console.log("textarea name: " + taname);
+	var iframeid = taname + '_ifr';
+	console.log("iframe id: " + iframeid);
+	// set up a mutation observer
+	var observer = new MutationObserver(function (mutations, me) {
+		var iframe = document.getElementById(iframeid);
+		if (iframe) {
+			var doc = iframe.contentDocument ? iframe.contentDocument: iframe.contentWindow.document;
+			if (doc.readyState == "complete") {
+				console.log("iframe is fully loaded, calling the update function directly");
+				updateIframe(iframeid);
+			} else {
+				console.log("iframe is NOT fully loaded, adding the update function as event listener");
+				iframe.onload = updateIframe(iframeid);
+			}
+			me.disconnect(); // stop observing
+			return;
+		}
+	});
+	// start observing
+	observer.observe(document, {
+		childList: true,
+		subtree: true
+	});
 } else {
-	console.log("iframe is NOT fully loaded, adding the update function as event listener");
-	iframe.onload = updateIframe(iframeid);
+	console.log("no textarea found, aborting mission!");
 }
 console.log("end of injected JS code reached");
