@@ -20,7 +20,7 @@ function updateIframe(meiframe) {
 		var body = doc.querySelector('body').innerHTML;
 		if (typeof body !== 'undefined') {
 			console.log("body html found");
-			if (!doc.getElementById('kilgraywashere')) {
+			if (!doc.getElementById('EditedByPlunetHelper')) {
 				var addCC = (settings.addCC == undefined ? true : settings.addCC);
 				var dSTfix = (settings.dSTfix == undefined ? true : settings.dSTfix);
 				var makeBold = (settings.makeBold == undefined ? true : settings.makeBold);
@@ -89,7 +89,7 @@ function updateIframe(meiframe) {
 						body = body.replace(/\~+([^<>]+?)\~+/gim, '<span style="color:' + highColor + ';background-color:' + highBColor + ';">$1</span>');
 					}
 				}
-				doc.querySelector('body').innerHTML = body + '<div id="kilgraywashere"></div>';
+				doc.querySelector('body').innerHTML = body + '<div id="EditedByPlunetHelper"></div>';
 				var taname = meiframe.substr(0, meiframe.length - 4);
 				console.log("mail body updated");
 				//doc.querySelector('body').tinyMCE.triggerSave();
