@@ -20,8 +20,14 @@ function updateIframe(meiframe) {
 		var body = doc.querySelector('body').innerHTML;
 		if (typeof body !== 'undefined') {
 			console.log("body html found");
-			if (!doc.getElementById('EditedByPlunetHelper')) {
+			if (!doc.getElementById('updatedbyplunethelper')) {
 				var addCC = (settings.addCC == undefined ? true : settings.addCC);
+				var mailCC = (settings.mailCC == undefined ? 'coordination@altagram.com' : settings.mailCC);
+				var mailID = '';
+				switch (mailCC) {
+					case 'coordination@altagram.com': mailID = 'Q29vcmRpbmF0aW9uIFRlYW0gIDxjb29yZGluYXRpb25AYWx0YWdyYW0uY29tPg=='; break;
+					case 'lm@altagram.com': mailID = 'QWx0YWdyYW0gR2VybWFueSBsbSA8bG1AYWx0YWdyYW0uY29tPg=='; break;
+				}
 				var dSTfix = (settings.dSTfix == undefined ? true : settings.dSTfix);
 				var makeBold = (settings.makeBold == undefined ? true : settings.makeBold);
 				var makeImportant = (settings.makeImportant == undefined ? true : settings.makeImportant);
@@ -89,34 +95,34 @@ function updateIframe(meiframe) {
 						body = body.replace(/\~+([^<>]+?)\~+/gim, '<span style="color:' + highColor + ';background-color:' + highBColor + ';">$1</span>');
 					}
 				}
-				doc.querySelector('body').innerHTML = body + '<div id="EditedByPlunetHelper"></div>';
+				doc.querySelector('body').innerHTML = body + '<div id="updatedbyplunethelper"></div>';
 				var taname = meiframe.substr(0, meiframe.length - 4);
 				console.log("mail body updated");
 				//doc.querySelector('body').tinyMCE.triggerSave();
 				//tinymce.save();
 				document.getElementById(taname).innerHTML = doc.querySelector('body').innerHTML;
-				if (addCC) {
-					// look for the CC field and if found then add Coordination
+				if ((addCC) && (mailCC != '') && (mailID != '')) {
+					// look for the CC field and if found then add the mail address
 					var cc = document.querySelector('[id^="ATagBox05CC"]');
 					var ccSelect = cc.getElementsByClassName('selectWrapper');
 					if (ccSelect.length > 0) {
 						ccSelect = ccSelect[0].getElementsByClassName('ng-non-bindable');
 						if (ccSelect.length > 0) {
 							ccSelect = ccSelect[0];
-							ccSelect.innerHTML = '<option id="ATagBox07#' + ccSelect.getAttribute('name') + '#Q29vcmRpbmF0aW9uIFRlYW0gIDxjb29yZGluYXRpb25AYWx0YWdyYW0uY29tPg==" value="Q29vcmRpbmF0aW9uIFRlYW0gIDxjb29yZGluYXRpb25AYWx0YWdyYW0uY29tPg==" selected="selected">coordination@altagram.com</option>';
+							ccSelect.innerHTML = '<option id="ATagBox07#' + ccSelect.getAttribute('name') + '#' + mailID + '" value="' + mailID + '" selected="selected">' + mailCC + '</option>';
 						}
 					}
 					var ccFakeSelect = cc.getElementsByClassName('ellipsis');
 					if (ccFakeSelect.length > 0) {
 						ccFakeSelect = ccFakeSelect[0];
-						ccFakeSelect.innerHTML = '<span title="coordination@altagram.com <coordination@altagram.com>">coordination@altagram.com</span><div class="icon-cross-small deleteButton"></div><div class="icon-cross-small deleteButtonHover"></div>';
+						ccFakeSelect.innerHTML = '<span title="' + mailCC + ' <' + mailCC + '>">' + mailCC + '</span><div class="icon-cross-small deleteButton"></div><div class="icon-cross-small deleteButtonHover"></div>';
 						ccFakeSelect.classList.remove('hinweistext');
 						ccFakeSelect.classList.add('selectedTag');
 					}
 					console.log("bcc added");
 				}
 			} else {
-				console.log("Kilgray was here!");
+				console.log("Updated by PlunetHelper!");
 			}
 		}
 		console.log("settings async call finished");

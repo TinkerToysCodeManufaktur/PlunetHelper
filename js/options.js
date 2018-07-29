@@ -10,6 +10,20 @@ function initOptions() {
 			chrome.storage.local.set({ "addCC": addCC });
 		}
 		document.getElementById("addCC").checked = addCC;
+		var mailCC = settings.mailCC;
+		if (mailCC == undefined) {
+			mailCC = "coordination@altagram.com";
+			chrome.storage.local.set({ "mailCC": mailCC });
+		}
+		var select = document.getElementById("mailswatch");
+		for (var i = 0; i < select.children.length; i++) {
+			var child = select.children[i];
+			if (child.value == mailCC) {
+				child.selected = "true";
+				break;
+			}
+		}
+		document.getElementById('mailswatch').addEventListener('change', saveCC);
 		var dSTfix = settings.dSTfix;
 		if (dSTfix == undefined) {
 			dSTfix = true;
@@ -60,7 +74,6 @@ function initOptions() {
 			chrome.storage.local.set({ "highColor": highColor });
 			chrome.storage.local.set({ "highBColor": highBColor });
 		}
-		document.getElementById('colorswatch').addEventListener('change', saveColor);
 		var select = document.getElementById("colorswatch");
 		for (var i = 0; i < select.children.length; i++) {
 			var child = select.children[i];
@@ -79,11 +92,9 @@ function initOptions() {
 		});
 	});
 }
-
 function saveOption() {
 	chrome.storage.local.set({[this.id]:document.getElementById(this.id).checked});
 }
-
 function saveColor() {
 	var select = document.getElementById("colorswatch");
 	var highColor = select.children[select.selectedIndex].getAttribute('color');
@@ -92,4 +103,9 @@ function saveColor() {
 	document.getElementById("colorsample").style.backgroundColor = highBColor;
 	chrome.storage.local.set({"highColor":highColor});
 	chrome.storage.local.set({"highBColor":highBColor});
+}
+function saveCC() {
+	var select = document.getElementById("mailswatch");
+	var mailCC = select.children[select.selectedIndex].value;
+	chrome.storage.local.set({"mailCC":mailCC});
 }
