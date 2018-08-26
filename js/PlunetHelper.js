@@ -6,10 +6,11 @@ Date.prototype.stdTimezoneOffset = function () {
     var jan = new Date(this.getFullYear(), 0, 1);
     var jul = new Date(this.getFullYear(), 6, 1);
     return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
-}
+};
 Date.prototype.isDstObserved = function () {
     return this.getTimezoneOffset() < this.stdTimezoneOffset();
-}
+};
+// observer calls this one
 function updateIframe(meiframe) {
 	//var meiframe = this.id;
 	console.log("update function is being called for " + meiframe);
@@ -37,7 +38,7 @@ function updateIframe(meiframe) {
 				var highlightMQ = (settings.highlightMQ == undefined ? true : settings.highlightMQ);
 				var highColor = (settings.highColor == undefined ? "#000000" : settings.highColor);
 				var highBColor = (settings.highBColor == undefined ? "#ffff99" : settings.highBColor);
-				// prettyfy/enhance the mail body text
+				// prettify/enhance the mail body text
 				if (dSTfix) {
 					// check if DST is on, and if so, fix the "CET" indicator
 					var today = new Date();
@@ -95,12 +96,12 @@ function updateIframe(meiframe) {
 						body = body.replace(/\~+([^<>]+?)\~+/gim, '<span style="color:' + highColor + ';background-color:' + highBColor + ';">$1</span>');
 					}
 				}
-				doc.querySelector('body').innerHTML = body + '<div id="updatedbyplunethelper"></div>';
+				doc.querySelector('body').innerHTML = '';
+				doc.querySelector('body').insertAdjacentHTML('afterbegin', body + '<div id="updatedbyplunethelper"></div>');
 				var taname = meiframe.substr(0, meiframe.length - 4);
-				console.log("mail body updated");
-				//doc.querySelector('body').tinyMCE.triggerSave();
-				//tinymce.save();
-				document.getElementById(taname).innerHTML = doc.querySelector('body').innerHTML;
+				document.getElementById(taname).innerHTML = '';
+				document.getElementById(taname).insertAdjacentHTML('afterbegin', body + '<div id="updatedbyplunethelper"></div>');
+				console.log("body html updated");
 				if ((addCC) && (mailCC != '') && (mailID != '')) {
 					// look for the CC field and if found then add the mail address
 					var cc = document.querySelector('[id^="ATagBox05CC"]');
@@ -109,17 +110,17 @@ function updateIframe(meiframe) {
 						ccSelect = ccSelect[0].getElementsByClassName('ng-non-bindable');
 						if (ccSelect.length > 0) {
 							ccSelect = ccSelect[0];
-							ccSelect.innerHTML = '<option id="ATagBox07#' + ccSelect.getAttribute('name') + '#' + mailID + '" value="' + mailID + '" selected="selected">' + mailCC + '</option>';
+							ccSelect.insertAdjacentHTML('afterbegin', '<option id="ATagBox07#' + ccSelect.getAttribute('name') + '#' + mailID + '" value="' + mailID + '" selected="selected">' + mailCC + '</option>');
 						}
 					}
 					var ccFakeSelect = cc.getElementsByClassName('ellipsis');
 					if (ccFakeSelect.length > 0) {
 						ccFakeSelect = ccFakeSelect[0];
-						ccFakeSelect.innerHTML = '<span title="' + mailCC + ' <' + mailCC + '>">' + mailCC + '</span><div class="icon-cross-small deleteButton"></div><div class="icon-cross-small deleteButtonHover"></div>';
+						ccFakeSelect.insertAdjacentHTML('afterbegin', '<span title="' + mailCC + ' <' + mailCC + '>">' + mailCC + '</span><div class="icon-cross-small deleteButton"></div><div class="icon-cross-small deleteButtonHover"></div>');
 						ccFakeSelect.classList.remove('hinweistext');
 						ccFakeSelect.classList.add('selectedTag');
 					}
-					console.log("bcc added");
+					console.log("CC added");
 				}
 			} else {
 				console.log("Updated by PlunetHelper!");
