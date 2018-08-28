@@ -49,19 +49,19 @@ function updateIframe(meiframe) {
 					}
 				}
 				if (swapMQ) { // look if file(s) info precedes memoq project name, and flip them
-					var turned = body.match(/(file(s)?\s*(\s*\(\d+\))?:\s*)(.+?)(memoq\s+project\s*:\s*)(.+?)(\r|\n|\r\n|<\s*br\s*\/?\s*>)+/im);
+					var turned = body.match(/(file(s)?\s*(\s*\(\d+\))?:\s*)(.+?)((\r|\n|\r\n|<\s*?br\s*?\/?\s*?>)?)(memoq\s+project\s*:\s*)(.+?)((\r|\n|\r\n|<\s*?br\s*?\/?\s*?>)+)/im);
 					if (turned !== null) {
-						body = body.replace(/(file(s)?\s*(\s*\(\d+\))?:\s*)(.+?)(memoq\s+project\s*:\s*)(.+?)(\r|\n|\r\n|<\s*br\s*\/?\s*>)+/im, '$5 $6<br/>$1$4<br/>');
+						body = body.replace(/(file(s)?\s*(\s*\(\d+\))?:\s*)(.+?)((\r|\n|\r\n|<\s*?br\s*?\/?\s*?>)?)(memoq\s+project\s*:\s*)(.+?)((\r|\n|\r\n|<\s*?br\s*?\/?\s*?>)+)/im, '$7$8<br/>$1$4$9');
 					}
 				}
 				if (highlightMQ) { // look for memoQ project name and file(s) list info, and highlight if found
-					var mqp = body.match(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)(.+?)(\r|\n|\r\n|<\s*br\s*\/?\s*>)+/im);
+					var mqp = body.match(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)(.+?)((\r|\n|\r\n|<\s*?br\s*?\/?\s*?>)+)/im);
 					if (mqp !== null) {
-						body = body.replace(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)(.+?)(\r|\n|\r\n|<\s*br\s*\/?\s*>)+/im, '<strong><span style="color:' + highColor + ';background-color:' + highBColor + ';">$1$2</span></strong><br/>');
+						body = body.replace(/(?![\r\n]\s*?)(memoq\s+?project\s*?:\s*?)(.+?)((\r|\n|\r\n|<\s*?br\s*?\/?\s*?>)+)/im, '<strong><span style="color:' + highColor + ';background-color:' + highBColor + ';">$1$2</span></strong>$3');
 					}
-					var mqf = body.match(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)(.+?)((\r|\n|\r\n|<\s*br\s*\/?\s*>){2,}|(?=memoq\s+?project))/im);
+					var mqf = body.match(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)(.+?)((\r|\n|\r\n|<\s*?br\s*?\/?\s*?>){2,}|<\s*?br\s*?\/?\s*?>(?=memoq\s+?project))/im);
 					if (mqf !== null) {
-						body = body.replace(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)(.+?)((\r|\n|\r\n|<\s*br\s*\/?\s*>){2,}|(?=memoq\s+?project))/im, '<strong><span style="color:' + highColor + ';background-color:' + highBColor + ';">$1$4</span></strong><br/><br/>');
+						body = body.replace(/(?![\r\n]\s*?)(file(s)?\s*?(\s*?\(\d+?\))?:\s*?)(.+?)((\r|\n|\r\n|<\s*?br\s*?\/?\s*?>){2,}|<\s*?br\s*?\/?\s*?>(?=memoq\s+?project))/im, '<strong><span style="color:' + highColor + ';background-color:' + highBColor + ';">$1$4</span></strong>$5');
 					}
 				}
 				if (cleanUp) { // get rid of unnecessary linebreaks
