@@ -1,15 +1,6 @@
 // PlunetHelper
 // (C) 2018 Michael K. Schmidt
 //
-// define helpers to determine DST
-Date.prototype.stdTimezoneOffset = function () {
-	var jan = new Date(this.getFullYear(), 0, 1);
-	var jul = new Date(this.getFullYear(), 6, 1);
-	return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
-};
-Date.prototype.isDstObserved = function () {
-	return this.getTimezoneOffset() < this.stdTimezoneOffset();
-};
 Date.prototype.addHours = function(h) {
 	this.setTime(this.getTime() + (h*60*60*1000));
 	return this;
@@ -57,7 +48,6 @@ function updateIframe(meiframe) {
 					var pattern = /\b((\d\d)[\.\-\/](\d\d)[\.\-\/](\d\d\d\d)\s((\d{1,2}):(\d\d)))\sCET\b/i;
 					var match = pattern.exec(body);
 					while (match != null) {
-						console.log("match: " + match.join('='));
 						var year = parseInt(match[4]),
 							month = parseInt(match[3]),
 							day = parseInt(match[2]),
@@ -186,6 +176,7 @@ if (typeof ta != 'undefined') {
 	// set up a mutation observer
 	var observer = new MutationObserver(function (mutations, me) {
 		var iframe = document.getElementById(iframeid);
+		console.log("iframe found: " + iframe);
 		if (iframe) {
 			var doc = iframe.contentDocument ? iframe.contentDocument: iframe.contentWindow.document;
 			if (doc.readyState == "complete") {
