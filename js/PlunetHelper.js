@@ -3,13 +3,24 @@
 //
 // define helpers to determine DST
 Date.prototype.stdTimezoneOffset = function () {
-    var jan = new Date(this.getFullYear(), 0, 1);
-    var jul = new Date(this.getFullYear(), 6, 1);
-    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+	var jan = new Date(this.getFullYear(), 0, 1);
+	var jul = new Date(this.getFullYear(), 6, 1);
+	return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
 };
 Date.prototype.isDstObserved = function () {
-    return this.getTimezoneOffset() < this.stdTimezoneOffset();
+	return this.getTimezoneOffset() < this.stdTimezoneOffset();
 };
+Date.prototype.addHours = function(h) {
+	this.setTime(this.getTime() + (h*60*60*1000));
+	return this;
+}
+function getTimeDiff(d, tz) {
+	var a = d.toLocaleString("ja", {timeZone: tz}).split(/[\/\s:]/);
+	a[1]--;
+	var t1 = Date.UTC.apply(null, a);
+	var t2 = new Date(d).setMilliseconds(0);
+	return (t2 - t1) / 60 / 60 / 1000;
+}
 // observer calls this one
 function updateIframe(meiframe) {
 	//var meiframe = this.id;
@@ -27,9 +38,11 @@ function updateIframe(meiframe) {
 				var mailID = '';
 				switch (mailCC) {
 					case 'coordination@altagram.com': mailID = 'Q29vcmRpbmF0aW9uIFRlYW0gIDxjb29yZGluYXRpb25AYWx0YWdyYW0uY29tPg=='; break;
-					case 'lm@altagram.com': mailID = 'QWx0YWdyYW0gR2VybWFueSBsbSA8bG1AYWx0YWdyYW0uY29tPg=='; break;
+					case 'lm@altagram.com': mailID = 'QWx0YWdyYW0gR21iSCAgPGxtQGFsdGFncmFtLmNvbT4='; break;
+					case 'korea.coordination@altagram.com': mailID = 'QWx0YWdyYW0gS29yZWEgIDxrb3JlYS5jb29yZGluYXRpb25AYWx0YWdyYW0uY29tPg=='; break;
 				}
 				var dSTfix = (settings.dSTfix == undefined ? true : settings.dSTfix);
+				var timeZone = (settings.timeZone == undefined ? 'Europe/Berlin' : settings.timeZone);
 				var makeBold = (settings.makeBold == undefined ? true : settings.makeBold);
 				var makeImportant = (settings.makeImportant == undefined ? true : settings.makeImportant);
 				var makeHighlighted = (settings.makeHighlighted == undefined ? true : settings.makeHighlighted);
@@ -38,15 +51,48 @@ function updateIframe(meiframe) {
 				var highlightMQ = (settings.highlightMQ == undefined ? true : settings.highlightMQ);
 				var highColor = (settings.highColor == undefined ? "#000000" : settings.highColor);
 				var highBColor = (settings.highBColor == undefined ? "#ffff99" : settings.highBColor);
-				// prettify/enhance the mail body text
-				if (dSTfix) {
-					// check if DST is on, and if so, fix the "CET" indicator
-					var today = new Date();
-					if (today.isDstObserved()) {
-						if (body.match(/\b(\d{1,2}:\d\d)\sCET\b/) !== null) {
-							body = body.replace(/\b(\d{1,2}:\d\d)\sCET\b/g, '$1 CEST');
+				// update the mail body text
+				if (dSTfix) { // request mail times are local Berlin time (can be with and without DST)
+					// find times
+					var pattern = /\b((\d\d)[\.\-\/](\d\d)[\.\-\/](\d\d\d\d)\s((\d{1,2}):(\d\d)))\sCET\b/i;
+					var match = pattern.exec(body);
+					while (match != null) {
+						console.log("match: " + match.join('='));
+						var year = parseInt(match[4]),
+							month = parseInt(match[3]),
+							day = parseInt(match[2]),
+							hours = parseInt(match[6]),
+							minutes = parseInt(match[7]);
+						var pDate = new Date(year, month-1, day, hours, minutes);
+						// determine any time difference to request mail time
+						var uDate = pDate.toLocaleString('ja', {timeZone: 'UTC', hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'}).replace(/\//g,'-') + ' UTC';
+						var uDay = pDate.toLocaleString('ja', {timeZone: 'UTC', hour12: false, year: 'numeric', month: '2-digit', day: '2-digit'});
+						var uTime = pDate.toLocaleString('ja', {timeZone: 'UTC', hour12: false, hour: '2-digit', minute:'2-digit'}) + ' UTC';
+						var tdiff = getTimeDiff(pDate, timeZone) - getTimeDiff(pDate, "Europe/Berlin");
+						pDate.addHours(-1 * tdiff);
+						var sDate = pDate.toLocaleString('ja', {hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'}).replace(/\//g,'-');
+						var sDay = pDate.toLocaleString('ja', {hour12: false, year: 'numeric', month: '2-digit', day: '2-digit'});
+						// check if DST is on, and if so, fix the "CET" indicator
+						var mom = moment(new Date(sDate)), tzCode = '';
+						var dst = mom.tz(timeZone).isDST();
+						switch (timeZone) {
+							case 'America/Montreal':
+								tzCode = (dst ? 'EDT' : 'ET');
+								break;
+							case 'Asia/Seoul':
+								tzCode = (dst ? 'KDST' : 'KST');
+								break;
+							case 'Europe/Berlin':
+								tzCode = (dst ? 'CEST' : 'CET');
+								break;
+							default:
+								tzCode = '';
 						}
+						body = body.replace(pattern, sDate + ' ' + tzCode + ' (' + (sDay == uDay ? uTime : uDate) + ')');
+						match = pattern.exec(body);
 					}
+					pattern = /(Start date)\s+?(.*?)\s*?\|\s*?(Delivery date )(.*?)(?=<br)/i;
+					body = body.replace(pattern, '$4 <br ><span style="color:black;">$1:&nbsp;$2</span>');
 				}
 				if (swapMQ) { // look if file(s) info precedes memoq project name, and flip them
 					var turned = body.match(/(file(s)?\s*(\s*\(\d+\))?:\s*)(.+?)((\r|\n|\r\n|<\s*?br\s*?\/?\s*?>)?)(memoq\s+project\s*:\s*)(.+?)((\r|\n|\r\n|<\s*?br\s*?\/?\s*?>)+)/im);

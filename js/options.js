@@ -30,6 +30,20 @@ function initOptions() {
 			chrome.storage.local.set({ "dSTfix": dSTfix });
 		}
 		document.getElementById("dSTfix").checked = dSTfix;
+		var timeZone = settings.timeZone;
+		if (timeZone == undefined) {
+			timeZone = "Europe/Berlin";
+			chrome.storage.local.set({ "timeZone": timeZone });
+		}
+		var select = document.getElementById("tzswatch");
+		for (var i = 0; i < select.children.length; i++) {
+			var child = select.children[i];
+			if (child.value == timeZone) {
+				child.selected = "true";
+				break;
+			}
+		}
+		document.getElementById('tzswatch').addEventListener('change', saveTZ);
 		var makeBold = settings.makeBold;
 		if (makeBold == undefined) {
 			makeBold = true;
@@ -108,4 +122,9 @@ function saveCC() {
 	var select = document.getElementById("mailswatch");
 	var mailCC = select.children[select.selectedIndex].value;
 	chrome.storage.local.set({"mailCC":mailCC});
+}
+function saveTZ() {
+	var select = document.getElementById("tzswatch");
+	var timeZone = select.children[select.selectedIndex].value;
+	chrome.storage.local.set({"timeZone":timeZone});
 }

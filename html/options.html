@@ -14,10 +14,16 @@
 	<select id="mailswatch" class="options-changeable">
 		<option value="coordination@altagram.com">coordination@altagram.com</option>
 		<option value="lm@altagram.com">lm@altagram.com</option>
+		<option value="korea.coordination@altagram.com">korea.coordination@altagram.com</option>
 	</select><br />
 	<label class="switch">
 		<input type="checkbox" id="dSTfix" class="options-clickable" checked="checked"><span class="slider round"></span>
-	</label><span id="dSTfix-label">Correct CET/CEST times in due dates</span><br />
+	</label><span id="dSTfix-label">Adapt time zone in due dates to:&nbsp;</span>
+	<select id="tzswatch" class="options-changeable">
+		<option value="Europe/Berlin">Berlin</option>
+		<option value="Asia/Seoul">Seoul</option>
+		<option value="America/Montreal">Montreal</option>
+	</select><br />
 	<label class="switch">
 		<input type="checkbox" id="cleanUp" class="options-clickable" checked="checked"><span class="slider round"></span>
 	</label><span id="cleanUp-label">Try and remove superfluous empty rows</span><br />
