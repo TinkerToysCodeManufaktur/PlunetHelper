@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "PlunetHelper",
-  "version": "1.24",
+  "version": "1.28",
   "author": "Michael K. Schmidt",
   "description": "Helps formatting Plunet request mails",
   "icons": { "128" : "/img/sunshine.png"},
@@ -10,6 +10,11 @@
       "matches": ["https://plunet.altagram.de:8443/pagesUTF8/Sys_EMailNeu.jsp*", "http://plunet.altagram.de/pagesUTF8/Sys_EMailNeu.jsp*"],
       "run_at": "document_idle",
       "js": ["/js/moment.min.js", "/js/moment-timezone-with-data.min.js", "/js/PlunetHelper.js"]
+    },
+    {
+      "matches": ["https://plunet.altagram.de:8443/pagesUTF8/auftrag_job.jsp*", "http://plunet.altagram.de/pagesUTF8/auftrag_job.jsp*"],
+      "run_at": "document_idle",
+      "js": ["/js/RatingsHelper.js"]
     }
   ],
   "permissions": [

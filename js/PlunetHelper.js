@@ -4,7 +4,7 @@
 Date.prototype.addHours = function(h) {
 	this.setTime(this.getTime() + (h*60*60*1000));
 	return this;
-}
+};
 function getTimeDiff(d, tz) {
 	var a = d.toLocaleString("ja", {timeZone: tz}).split(/[\/\s:]/);
 	a[1]--;
@@ -30,7 +30,7 @@ function updateIframe(meiframe) {
 				switch (mailCC) {
 					case 'coordination@altagram.com': mailID = 'Q29vcmRpbmF0aW9uIFRlYW0gIDxjb29yZGluYXRpb25AYWx0YWdyYW0uY29tPg=='; break;
 					case 'lm@altagram.com': mailID = 'QWx0YWdyYW0gR21iSCAgPGxtQGFsdGFncmFtLmNvbT4='; break;
-					case 'korea.coordination@altagram.com': mailID = 'QWx0YWdyYW0gS29yZWEgIDxrb3JlYS5jb29yZGluYXRpb25AYWx0YWdyYW0uY29tPg=='; break;
+					case 'coordination.korea@altagram.com': mailID = 'Y29vcmRpbmF0aW9uLmtvcmVhQGFsdGFncmFtLmNvbSA8Y29vcmRpbmF0aW9uLmtvcmVhQGFsdGFncmFtLmNvbT4='; break;
 				}
 				var dSTfix = (settings.dSTfix == undefined ? true : settings.dSTfix);
 				var timeZone = (settings.timeZone == undefined ? 'Europe/Berlin' : settings.timeZone);
@@ -48,6 +48,7 @@ function updateIframe(meiframe) {
 					var pattern = /\b((\d\d)[\.\-\/](\d\d)[\.\-\/](\d\d\d\d)\s((\d{1,2}):(\d\d)))\sCET\b/i;
 					var match = pattern.exec(body);
 					while (match != null) {
+						console.log("match: " + match.join('='));
 						var year = parseInt(match[4]),
 							month = parseInt(match[3]),
 							day = parseInt(match[2]),
@@ -81,8 +82,8 @@ function updateIframe(meiframe) {
 						body = body.replace(pattern, sDate + ' ' + tzCode + ' (' + (sDay == uDay ? uTime : uDate) + ')');
 						match = pattern.exec(body);
 					}
-					pattern = /(Start date)\s+?(.*?)\s*?\|\s*?(Delivery date )(.*?)(?=<br)/i;
-					body = body.replace(pattern, '$4 <br ><span style="color:black;">$1:&nbsp;$2</span>');
+					pattern = /(Start date)\s+?(.*?)\s*?\|\s*?(Delivery date )(.*?)(?=(<\/span)|(<br))/i;
+					body = body.replace(pattern, '$4 <br ><span style="color:black;font-weight:bold;">$1:&nbsp;<span style="font-weight:normal;">$2</span></span>');
 				}
 				if (swapMQ) { // look if file(s) info precedes memoq project name, and flip them
 					var turned = body.match(/(file(s)?\s*(\s*\(\d+\))?:\s*)(.+?)((\r|\n|\r\n|<\s*?br\s*?\/?\s*?>)?)(memoq\s+project\s*:\s*)(.+?)((\r|\n|\r\n|<\s*?br\s*?\/?\s*?>)+)/im);
@@ -176,9 +177,8 @@ if (typeof ta != 'undefined') {
 	// set up a mutation observer
 	var observer = new MutationObserver(function (mutations, me) {
 		var iframe = document.getElementById(iframeid);
-		console.log("iframe found: " + iframe);
 		if (iframe) {
-			var doc = iframe.contentDocument ? iframe.contentDocument: iframe.contentWindow.document;
+			var doc = (iframe.contentDocument ? iframe.contentDocument : iframe.contentWindow.document);
 			if (doc.readyState == "complete") {
 				console.log("iframe is fully loaded, calling the update function directly");
 				updateIframe(iframeid);
